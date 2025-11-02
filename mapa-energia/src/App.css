@@ -182,6 +182,49 @@ body {
   cursor: pointer;
 }
 
+.icono-brecha-servicio div {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e74c3c; /* rojo */
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+}
+
+/* Leyenda del mapa (mejorada para coincidir con los iconos) */
+.map-legend {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 550;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.map-legend .legend-title { font-weight: 700; margin-bottom: 6px; }
+.map-legend .legend-item { display:flex; align-items:center; gap:8px; margin-top:6px; }
+.map-legend .legend-sym { width:12px; height:12px; border-radius:50%; flex: 0 0 12px; }
+.map-legend .central { background: #f6e05e; box-shadow: 0 0 6px rgba(246,224,94,0.4); border: 1px solid rgba(0,0,0,0.2);} 
+.map-legend .planta { background: #4299e1; box-shadow: 0 0 6px rgba(66,153,226,0.3); border: 1px solid rgba(0,0,0,0.2);} 
+.map-legend .brecha { background: #e74c3c; box-shadow: 0 0 6px rgba(231,76,60,0.4); border: 1px solid rgba(0,0,0,0.2);} 
+
+/* Control del umbral (slider) */
+.threshold-control {
+  background: rgba(45,55,72,0.85);
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  width: 220px;
+}
+.threshold-control input[type="range"] {
+  width: 100%;
+  accent-color: #e74c3c; /* color del slider en navegadores que lo soportan */
+}
+.threshold-control label { font-size: 12px; }
+
 /* --- 7. POPUPS Y CONTROLES (Dark Mode) --- */
 .leaflet-popup-content-wrapper {
   background-color: #2d3748; /* Fondo oscuro */
