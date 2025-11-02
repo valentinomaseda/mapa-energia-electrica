@@ -22,16 +22,14 @@ const iconoPlanta = new L.DivIcon({
   iconAnchor: [12, 12],
 });
 
-const iconoBrecha = new L.DivIcon({
-  className: "icono-brecha-servicio",
-  html: `<div style="width:18px;height:18px;border-radius:50%;background:#e74c3c;border:2px solid white"></div>`,
-  iconSize: [18, 18],
-  iconAnchor: [9, 9],
+// Icono de central en estado 'brecha' (rojo)
+const iconoCentralRoja = new L.DivIcon({
+  className: "icono-central-electrica-roja",
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
-const pointToLayerCentral = (feature, latlng) => {
-  return L.marker(latlng, { icon: iconoCentral, interactive: true });
-};
+// NOTE: no se usa un icono separado para "brecha"; cambiaremos el color del icono de central.
 
 const pointToLayerPlanta = (feature, latlng) => {
   return L.marker(latlng, { icon: iconoPlanta, interactive: true });
@@ -75,8 +73,8 @@ function Mapa() {
   const [centralesData, setCentralesData] = useState(null);
   const [plantasData, setPlantasData] = useState(null);
   const [serviceThresholdKm, setServiceThresholdKm] = useState(10);
-  const [brechasVisible, setBrechasVisible] = useState(false);
-
+  // Controla si las centrales que superan el umbral se muestran en rojo
+  const [highlightBrechas, setHighlightBrechas] = useState(true);
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
@@ -168,8 +166,13 @@ function Mapa() {
         {centralesData && (
           <LayersControl.Overlay name="⚡ Centrales Eléctricas" checked>
             <GeoJSON
+              key={`centrales-${serviceThresholdKm}-${highlightBrechas}`}
               data={centralesData}
-              pointToLayer={pointToLayerCentral}
+              pointToLayer={(feature, latlng) => {
+                const d = feature?.properties?.nearestDist;
+                const useRed = typeof d === 'number' && d >= serviceThresholdKm && highlightBrechas;
+                return L.marker(latlng, { icon: useRed ? iconoCentralRoja : iconoCentral, interactive: true });
+              }}
               onEachFeature={onEachFeature}
             />
           </LayersControl.Overlay>
@@ -201,36 +204,17 @@ function Mapa() {
         </div>
       </div>
 
-      {centralesData && brechasVisible && (
-        <GeoJSON
-          key={`brechas-${serviceThresholdKm}`}
-          data={{
-            type: "FeatureCollection",
-            features: centralesData.features.filter((f) => {
-              const d = f?.properties?.nearestDist;
-              return d === null || d === undefined
-                ? false
-                : d >= serviceThresholdKm;
-            }),
-          }}
-          pointToLayer={(feature, latlng) =>
-            L.marker(latlng, { icon: iconoBrecha })
-          }
-          onEachFeature={onEachFeature}
-        />
-      )}
-
       <ThresholdControl
         value={serviceThresholdKm}
         onChange={setServiceThresholdKm}
-        visible={brechasVisible}
-        setVisible={setBrechasVisible}
+        highlight={highlightBrechas}
+        setHighlight={setHighlightBrechas}
       />
     </MapContainer>
   );
 }
 
-function ThresholdControl({ value, onChange, visible, setVisible }) {
+function ThresholdControl({ value, onChange, highlight, setHighlight }) {
   const map = useMap();
 
   const handlePointerDown = (e) => {
@@ -256,8 +240,7 @@ function ThresholdControl({ value, onChange, visible, setVisible }) {
           marginBottom: 6,
         }}
       >
-        Umbral de distancia (km):{" "}
-        <strong style={{ color: "#fff" }}>{value}</strong>
+        Umbral de distancia (km): <strong style={{ color: "#fff" }}>{value}</strong>
       </label>
       <input
         type="range"
@@ -273,20 +256,16 @@ function ThresholdControl({ value, onChange, visible, setVisible }) {
         onMouseDown={handlePointerDown}
         onMouseUp={handlePointerUp}
       />
-      <div
-        style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}
-      >
+      <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
         <input
-          id="brechas-visible"
+          id="highlight-brechas"
           type="checkbox"
-          checked={visible}
-          onChange={(e) => setVisible(e.target.checked)}
+          checked={!!highlight}
+          onChange={(e) => setHighlight && setHighlight(e.target.checked)}
+          style={{ cursor: "pointer" }}
         />
-        <label
-          htmlFor="brechas-visible"
-          style={{ color: "#e2e8f0", fontSize: 12 }}
-        >
-          Mostrar brechas
+        <label htmlFor="highlight-brechas" style={{ color: "#e2e8f0", fontSize: 12 }}>
+          Resaltar brechas
         </label>
       </div>
     </div>
