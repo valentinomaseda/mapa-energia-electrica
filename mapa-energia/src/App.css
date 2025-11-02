@@ -1,18 +1,15 @@
-/* --- 1. IMPORTAMOS UNA FUENTE "TECH" --- */
 @import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap");
 
-/* --- 2. TEMA OSCURO GLOBAL --- */
 body {
   margin: 0;
   font-family: "Exo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #151a24; /* Fondo charcoal oscuro */
-  color: #e2e8f0; /* Texto gris claro */
+  background-color: #151a24;
+  color: #e2e8f0;
 }
 
-/* --- 3. LAYOUT DE LA APP --- */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -23,19 +20,17 @@ body {
   flex: 1;
   overflow: hidden;
   display: flex;
-
   background-size: 20px 20px;
 }
 
-/* --- 4. BARRA DE NAVEGACIÓN (Dark Mode) --- */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 24px;
   height: 60px;
-  background-color: #2d3748; /* Un poco más claro que el body */
-  border-bottom: 1px solid #4a5568; /* Borde sutil */
+  background-color: #2d3748;
+  border-bottom: 1px solid #4a5568;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1001;
   flex-shrink: 0;
@@ -46,7 +41,7 @@ body {
   align-items: center;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #f7fafc; /* Texto blanco */
+  color: #f7fafc;
   letter-spacing: 0.5px;
 }
 
@@ -57,25 +52,46 @@ body {
 
 .navbar-link {
   text-decoration: none;
-  color: #a0aec0; /* Texto de link gris */
+  color: #a0aec0;
   font-weight: 500;
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 6px;
-  transition: all 0.2s ease;
-  border-bottom: 2px solid transparent; /* Borde inferior para 'active' */
+  transition: all 0.2s ease-in-out;
+  border-bottom: 2px solid transparent;
 }
 .navbar-link:hover {
-  color: #f7fafc; /* Blanco al pasar el mouse */
-  background-color: #4a5568; /* Fondo gris hover */
+  color: #f7fafc;
+  background-color: #4a5568;
 }
 /* Estado activo del link */
 .navbar-link.active {
-  color: #4299e1; /* Azul eléctrico */
-  border-bottom-color: #4299e1; /* Línea azul abajo */
+  color: #4299e1;
+  border-bottom-color: #4299e1;
 }
 
-/* --- 5. PÁGINA DE INICIO (Estilo "Hero") --- */
+.navbar-logo a {
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar-logo svg {
+  transition: filter 0.2s ease;
+}
+
+.navbar-logo a:hover {
+  transform: scale(1.01);
+}
+
+.navbar-logo a:hover svg {
+  filter: drop-shadow(0 0 5px #4299e1);
+}
+
 .inicio-container {
   flex: 1;
   display: flex;
@@ -98,15 +114,14 @@ body {
   color: #f7fafc;
 }
 
-/* Color de acento para el título */
 .text-accent-blue {
-  color: #4299e1; /* Azul eléctrico */
+  color: #4299e1;
 }
 
 .inicio-subtitle {
   font-size: 1.25rem;
   font-weight: 300;
-  color: #a0aec0; /* Gris claro */
+  color: #a0aec0;
   margin: 20px 0 40px 0;
 }
 
@@ -123,7 +138,7 @@ body {
 .stat-number {
   font-size: 2.5rem;
   font-weight: 600;
-  color: #f6e05e; /* Amarillo-ámbar para los números */
+  color: #f6e05e;
 }
 .stat-item span {
   font-size: 1rem;
@@ -137,7 +152,7 @@ body {
   font-size: 1rem;
   font-weight: 600;
   color: #ffffff;
-  background-color: #3182ce; /* Azul */
+  background-color: #3182ce; 
   border: none;
   border-radius: 8px;
   text-decoration: none;
@@ -145,12 +160,11 @@ body {
   transition: all 0.3s ease;
 }
 .inicio-cta-button:hover {
-  background-color: #4299e1; /* Azul más claro */
+  background-color: #4299e1;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(66, 153, 226, 0.3);
 }
 
-/* --- 6. MAPA Y CONTROLES (Dark Mode) --- */
 .map-container-pagina {
   width: 100%;
   height: 100%;
@@ -158,11 +172,11 @@ body {
 
 /* Icono de Central (Retocado para dark mode) */
 .icono-central-electrica {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f6e05e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'%3e%3c/polygon%3e%3c/svg%3e"); /* Amarillo Ámbar */
-  background-color: rgba(45, 55, 72, 0.8); /* Fondo oscuro semi-transparente */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f6e05e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'%3e%3c/polygon%3e%3c/svg%3e");
+  background-color: rgba(45, 55, 72, 0.8);
   border-radius: 50%;
-  border: 1px solid #f6e05e; /* Borde Ámbar */
-  box-shadow: 0 0 10px rgba(246, 224, 94, 0.5); /* Resplandor */
+  border: 1px solid #f6e05e;
+  box-shadow: 0 0 10px rgba(246, 224, 94, 0.5);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 16px 16px;
@@ -171,11 +185,11 @@ body {
 
 /* Icono de Planta (Retocado para dark mode) */
 .icono-planta-transformadora {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%234299e1' stroke='%231A202C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='4' y='4' width='16' height='16' rx='2' ry='2'%3e%3c/rect%3e%3c/svg%3e"); /* Azul Eléctrico */
-  background-color: rgba(45, 55, 72, 0.8); /* Fondo oscuro */
-  border: 1px solid #4299e1; /* Borde Azul */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%234299e1' stroke='%231A202C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='4' y='4' width='16' height='16' rx='2' ry='2'%3e%3c/rect%3e%3c/svg%3e");
+  background-color: rgba(45, 55, 72, 0.8);
+  border: 1px solid #4299e1;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(66, 153, 226, 0.5); /* Resplandor */
+  box-shadow: 0 0 10px rgba(66, 153, 226, 0.5);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 16px 16px;
@@ -186,12 +200,11 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #e74c3c; /* rojo */
+  background: #e74c3c;
   border: 2px solid #fff;
   box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
 }
 
-/* Leyenda del mapa (mejorada para coincidir con los iconos) */
 .map-legend {
   position: absolute;
   right: 12px;
@@ -210,7 +223,6 @@ body {
 .map-legend .planta { background: #4299e1; box-shadow: 0 0 6px rgba(66,153,226,0.3); border: 1px solid rgba(0,0,0,0.2);} 
 .map-legend .brecha { background: #e74c3c; box-shadow: 0 0 6px rgba(231,76,60,0.4); border: 1px solid rgba(0,0,0,0.2);} 
 
-/* Control del umbral (slider) */
 .threshold-control {
   background: rgba(45,55,72,0.85);
   padding: 8px 10px;
@@ -221,14 +233,43 @@ body {
 }
 .threshold-control input[type="range"] {
   width: 100%;
-  accent-color: #e74c3c; /* color del slider en navegadores que lo soportan */
+  accent-color: #e74c3c;
+  cursor: pointer;
 }
 .threshold-control label { font-size: 12px; }
 
-/* --- 7. POPUPS Y CONTROLES (Dark Mode) --- */
+.app-loader {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #e2e8f0;
+  background: rgba(13,17,23,0.7);
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+}
+.app-loader .spinner {
+  width: 36px;
+  height: 36px;
+  border: 4px solid rgba(255,255,255,0.12);
+  border-top-color: #4299e1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.app-loader .loader-text { font-size: 13px; color: #e2e8f0; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .leaflet-popup-content-wrapper {
-  background-color: #2d3748; /* Fondo oscuro */
-  color: #e2e8f0; /* Texto claro */
+  background-color: #2d3748; 
+  color: #e2e8f0;
   border: 1px solid #4a5568;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -237,18 +278,17 @@ body {
 .leaflet-popup-content h4 {
   margin: 0 0 10px 0;
   padding-bottom: 10px;
-  border-bottom: 1px solid #4a5568; /* Separador */
+  border-bottom: 1px solid #4a5568;
   font-size: 16px;
-  color: #071f2f; /* Título blanco */
+  color: #071f2f;
 }
 .leaflet-popup-content strong {
-  color: #4299e1; /* Acento azul */
+  color: #4299e1;
 }
 .leaflet-popup-tip {
-  background-color: #2d3748; /* Flecha del popup */
+  background-color: #2d3748;
 }
 
-/* Control de Capas (Dark Mode) */
 .leaflet-control-layers {
   background-color: #2d3748;
   color: #e2e8f0;
