@@ -1,44 +1,53 @@
-/* --- ESTILOS GLOBALES Y LAYOUT --- */
+/* --- 1. IMPORTAMOS UNA FUENTE "TECH" --- */
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap");
+
+/* --- 2. TEMA OSCURO GLOBAL --- */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: "Exo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #151a24; /* Fondo charcoal oscuro */
+  color: #e2e8f0; /* Texto gris claro */
 }
 
-/* Contenedor principal de la App (Flexbox vertical) */
+/* --- 3. LAYOUT DE LA APP --- */
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Ocupa toda la altura de la ventana */
+  height: 100vh;
 }
 
-/* Contenedor del contenido (Inicio o Mapa) */
 .page-content {
-  flex: 1; /* <-- ESTA ES LA CLAVE: se estira para usar el espacio sobrante */
-  overflow: hidden; /* Evita barras de scroll */
-  display: flex; /* Ayuda a que el contenido (mapa) se estire */
-  background-color: #f4f4f4; /* Un fondo gris claro para la pág de inicio */
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+
+  background-size: 20px 20px;
 }
 
-/* --- BARRA DE NAVEGACIÓN --- */
+/* --- 4. BARRA DE NAVEGACIÓN (Dark Mode) --- */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 24px;
   height: 60px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1001; /* Asegura que esté sobre el mapa */
-  flex-shrink: 0; /* Evita que se encoja */
+  background-color: #2d3748; /* Un poco más claro que el body */
+  border-bottom: 1px solid #4a5568; /* Borde sutil */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  flex-shrink: 0;
 }
 
 .navbar-logo {
-  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #2c2c2c;
+  color: #f7fafc; /* Texto blanco */
+  letter-spacing: 0.5px;
 }
 
 .navbar-links {
@@ -48,82 +57,166 @@ body {
 
 .navbar-link {
   text-decoration: none;
-  color: #007bff;
+  color: #a0aec0; /* Texto de link gris */
   font-weight: 500;
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent; /* Borde inferior para 'active' */
 }
 .navbar-link:hover {
-  background-color: #f0f8ff;
+  color: #f7fafc; /* Blanco al pasar el mouse */
+  background-color: #4a5568; /* Fondo gris hover */
+}
+/* Estado activo del link */
+.navbar-link.active {
+  color: #4299e1; /* Azul eléctrico */
+  border-bottom-color: #4299e1; /* Línea azul abajo */
 }
 
-/* --- PÁGINA DE INICIO --- */
+/* --- 5. PÁGINA DE INICIO (Estilo "Hero") --- */
 .inicio-container {
-  flex: 1; /* Ocupa el espacio disponible */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 40px;
-  max-width: 800px;
-  margin: 40px auto;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
-  line-height: 1.7;
-  height: fit-content; /* Para que la caja se ajuste al contenido */
+  text-align: center;
 }
 
-.inicio-container h1 {
-  color: #222;
-  margin-top: 0;
+.inicio-hero {
+  max-width: 700px;
 }
 
-
-/* --- (Tus estilos de mapa existentes [cite: 1-52] van aquí) --- */
-
-.icono-central-electrica {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23FFA500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'%3e%3c/polygon%3e%3c/svg%3e");
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  border: 1px solid #FFA500;
-  box-shadow: 0 0 6px rgba(0,0,0,0.5);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 16px 16px;
+.inicio-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  color: #f7fafc;
 }
 
-/* Icono para plantas transformadoras: misma silueta que la central, color teal */
-.icono-planta-transformadora {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232F9B8A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'%3e%3c/polygon%3e%3c/svg%3e");
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 50%;
-  border: 1px solid #2F9B8A;
-  box-shadow: 0 0 6px rgba(0,0,0,0.35);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 16px 16px;
-  width: 24px;
-  height: 24px;
+/* Color de acento para el título */
+.text-accent-blue {
+  color: #4299e1; /* Azul eléctrico */
+}
+
+.inicio-subtitle {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: #a0aec0; /* Gris claro */
+  margin: 20px 0 40px 0;
+}
+
+.inicio-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #f6e05e; /* Amarillo-ámbar para los números */
+}
+.stat-item span {
+  font-size: 1rem;
+  color: #a0aec0;
+}
+
+/* Botón de "Call to Action" */
+.inicio-cta-button {
   display: inline-block;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #3182ce; /* Azul */
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(66, 153, 226, 0.25);
+  transition: all 0.3s ease;
+}
+.inicio-cta-button:hover {
+  background-color: #4299e1; /* Azul más claro */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(66, 153, 226, 0.3);
 }
 
-.leaflet-popup-content-wrapper {
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* --- 6. MAPA Y CONTROLES (Dark Mode) --- */
+.map-container-pagina {
+  width: 100%;
+  height: 100%;
 }
-.leaflet-popup-content {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
+
+/* Icono de Central (Retocado para dark mode) */
+.icono-central-electrica {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f6e05e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'%3e%3c/polygon%3e%3c/svg%3e"); /* Amarillo Ámbar */
+  background-color: rgba(45, 55, 72, 0.8); /* Fondo oscuro semi-transparente */
+  border-radius: 50%;
+  border: 1px solid #f6e05e; /* Borde Ámbar */
+  box-shadow: 0 0 10px rgba(246, 224, 94, 0.5); /* Resplandor */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  cursor: pointer;
+}
+
+/* Icono de Planta (Retocado para dark mode) */
+.icono-planta-transformadora {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%234299e1' stroke='%231A202C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='4' y='4' width='16' height='16' rx='2' ry='2'%3e%3c/rect%3e%3c/svg%3e"); /* Azul Eléctrico */
+  background-color: rgba(45, 55, 72, 0.8); /* Fondo oscuro */
+  border: 1px solid #4299e1; /* Borde Azul */
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(66, 153, 226, 0.5); /* Resplandor */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  cursor: pointer;
+}
+
+/* --- 7. POPUPS Y CONTROLES (Dark Mode) --- */
+.leaflet-popup-content-wrapper {
+  background-color: #2d3748; /* Fondo oscuro */
+  color: #e2e8f0; /* Texto claro */
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .leaflet-popup-content h4 {
-  margin: 0 0 8px 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  margin: 0 0 10px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #4a5568; /* Separador */
   font-size: 16px;
-  color: #333;
+  color: #071f2f; /* Título blanco */
 }
 .leaflet-popup-content strong {
-  color: #555;
+  color: #4299e1; /* Acento azul */
+}
+.leaflet-popup-tip {
+  background-color: #2d3748; /* Flecha del popup */
 }
 
+/* Control de Capas (Dark Mode) */
+.leaflet-control-layers {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+}
+.leaflet-control-layers-base label,
+.leaflet-control-layers-overlays label {
+  font-weight: 500;
+}
+.leaflet-control-layers-separator {
+  border-top: 1px solid #4a5568;
+}

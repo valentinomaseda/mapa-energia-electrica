@@ -1,38 +1,23 @@
-import React, { useState } from 'react';
-import Navbar from './components/Navbar'; // 1. Importamos la barra de navegación
-import Inicio from './pages/Inicio';       // 2. Importamos la página de Inicio
-import Mapa from './pages/Mapa';           // 3. Importamos tu Mapa
-import './App.css'; 
+import { Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Inicio from './pages/Inicio';
+import Mapa from './pages/Mapa';
+import './App.css';
 
 function App() {
-  // Este estado controla qué página estamos viendo. Empezamos en 'inicio'.
-  const [paginaActual, setPaginaActual] = useState('inicio');
-
-  // Función que decide qué componente de página mostrar
-  const renderizarPagina = () => {
-    switch (paginaActual) {
-      case 'inicio':
-        return <Inicio />;
-      case 'mapa':
-        return <Mapa />;
-      default:
-        return <Inicio />;
-    }
-  };
-
+  // Ahora usamos rutas declarativas en lugar de controlar
+  // la navegación mediante estado manual.
   return (
-    // 'app-container' es un nuevo estilo en App.css
-    // que divide la app en "Navbar" y "Contenido"
     <div className="app-container">
-      
-      {/* La Navbar siempre es visible y le pasamos la
-          función para cambiar de página */}
-      <Navbar cambiarPagina={setPaginaActual} />
+      {/* Navbar siempre visible (no depende de props de navegación) */}
+      <Navbar />
 
-      {/* El 'page-content' es un contenedor que se estira
-          para ocupar el resto de la pantalla */}
       <div className="page-content">
-        {renderizarPagina()}
+        <Routes>
+          <Route path="/" element={<Inicio />} />
+          <Route path="/mapa" element={<Mapa />} />
+          <Route path="*" element={<div>404 — No encontrado</div>} />
+        </Routes>
       </div>
     </div>
   );

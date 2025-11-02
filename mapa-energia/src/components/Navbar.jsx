@@ -1,24 +1,27 @@
 import React from 'react';
-// (No importamos CSS, lo maneja App.jsx)
+import { Link } from 'react-router-dom';
 
-// Recibimos 'cambiarPagina' (que es 'setPaginaActual')
-// desde App.jsx como una "prop"
-function Navbar({ cambiarPagina }) {
+function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        Proyecto SIG - Energía
-      </div>
-      <div className="navbar-links">
-        {/* Estos no son links <a> tradicionales.
-            Usan onClick para cambiar el estado en App.jsx
-            sin recargar la página. */}
-        <a className="navbar-link" onClick={() => cambiarPagina('inicio')}>
-          Inicio
-        </a>
-        <a className="navbar-link" onClick={() => cambiarPagina('mapa')}>
-          Mapa Interactivo
-        </a>
+        {/* Logo clickeable que lleva al inicio */}
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            style={{ marginRight: '10px' }}
+          >
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+          <span>Proyecto SIG // Red Energética</span>
+        </Link>
       </div>
     </nav>
   );

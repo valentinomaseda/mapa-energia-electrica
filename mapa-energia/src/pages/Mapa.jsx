@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, GeoJSON, LayersControl } from "react-leaflet";
-import "../App.css"; // <-- CAMBIO 1: La ruta ahora es "../App.css"
+import "../App.css"; 
 import L from "leaflet";
 
-// (Todo tu código de iconos y funciones va aquí, sin cambios)
+// (Tu código de iconos y funciones pointToLayer no cambia)
 const iconoCentral = new L.DivIcon({
   className: "icono-central-electrica",
-  iconSize: [24, 24],
+  iconSize: [24, 24], 
   iconAnchor: [12, 12],
 });
 
 const iconoPlanta = new L.DivIcon({
-  className: "icono-planta-transformadora",
+  className: "icono-planta-transformadora", 
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
@@ -24,13 +24,14 @@ const pointToLayerPlanta = (feature, latlng) => {
   return L.marker(latlng, { icon: iconoPlanta, interactive: true });
 };
 
-const onEachCentral = (feature, layer) => {
+// (Tu función onEachFeature no cambia)
+const onEachFeature = (feature, layer) => {
   try {
     if (!feature || !feature.properties) return;
     const props = feature.properties;
     let nombre = props.fna || props.nam || "Sin nombre";
     if (typeof nombre !== "string") nombre = String(nombre);
-    const nombreLimpio = nombre.replace(/\r\n/g, "");
+    const nombreLimpio = nombre.replace(/\r\n/g, ""); 
     let popupContent = `<h4>${props.objeto || 'Elemento'}</h4>`;
     popupContent += `<strong>Nombre:</strong> ${nombreLimpio}<br/>`;
     if (props.gna) {
@@ -44,11 +45,11 @@ const onEachCentral = (feature, layer) => {
       }
     });
   } catch (err) {
-    console.error("Error construyendo popup de central:", err, feature.properties);
+    console.error("Error construyendo popup:", err);
   }
 };
 
-// --- CAMBIO 2: Renombramos la función de "App" a "Mapa" ---
+
 function Mapa() {
   const [centralesData, setCentralesData] = useState(null);
   const [plantasData, setPlantasData] = useState(null);
@@ -56,13 +57,13 @@ function Mapa() {
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
-  // (Tu useEffect de carga de datos [cite: 77-94], sin cambios)
+  // (Tu useEffect de carga de datos no cambia)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [centralesRes, plantasRes] = await Promise.all([
           fetch(`${import.meta.env.BASE_URL}central_electrica.geojson`),
-          fetch(`${import.meta.env.BASE_URL}planta_transformadora.geojson`),
+          fetch(`${import.meta.env.BASE_URL}planta_transformadora.geojson`)
         ]);
 
         const centrales = await centralesRes.json();
@@ -70,12 +71,10 @@ function Mapa() {
 
         setCentralesData(centrales);
         setPlantasData(plantas);
-        console.log("Datos cargados (centrales, plantas)", centrales?.features?.length, plantas?.features?.length);
       } catch (err) {
         console.error("Error al cargar los datos:", err);
       }
     };
-
     fetchData();
   }, []);
 
@@ -83,12 +82,14 @@ function Mapa() {
     <MapContainer
       center={mapCenter}
       zoom={zoomLevel}
-      // --- CAMBIO 3: El estilo ahora es 100% del contenedor padre (.page-content) ---
-      style={{ height: "100%", width: "100%" }}
+      className="map-container-pagina" // Usa la clase de App.css
     >
+      {/* --- ¡CAMBIO ESTÉTICO! --- 
+          Usamos un mapa base "Dark Matter" de CartoDB.
+          Es mucho más profesional para visualizar datos. */}
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
 
       <LayersControl position="topright">
@@ -97,17 +98,18 @@ function Mapa() {
             <GeoJSON
               data={centralesData}
               pointToLayer={pointToLayerCentral}
-              onEachFeature={onEachCentral}
+              onEachFeature={onEachFeature}
             />
           </LayersControl.Overlay>
         )}
 
         {plantasData && (
+          // Usé el emoji 🔌 para diferenciarlo
           <LayersControl.Overlay name="🔌 Plantas Transformadoras" checked>
             <GeoJSON
               data={plantasData}
               pointToLayer={pointToLayerPlanta}
-              onEachFeature={onEachCentral}
+              onEachFeature={onEachFeature} 
             />
           </LayersControl.Overlay>
         )}
@@ -116,6 +118,5 @@ function Mapa() {
   );
 }
 
-// --- CAMBIO 4: Exportamos "Mapa" ---
 export default Mapa;
 
