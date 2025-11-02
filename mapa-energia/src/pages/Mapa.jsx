@@ -17,7 +17,8 @@ const iconoCentral = new L.DivIcon({
 });
 
 const iconoPlanta = new L.DivIcon({
-  className: "icono-planta-transformadora",
+  className: "icono-planta-transformadora-img",
+  html: `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center"><img src="${import.meta.env.BASE_URL}planta_transformadora_icon.svg" alt="planta" style="width:16px;height:16px;display:block"/></div>`,
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
