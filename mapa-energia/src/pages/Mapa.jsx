@@ -77,6 +77,7 @@ function Mapa() {
   const [serviceThresholdKm, setServiceThresholdKm] = useState(10);
   const [highlightBrechas, setHighlightBrechas] = useState(true);
   const [filteredCentrales, setFilteredCentrales] = useState([]);
+  const [filteredPlantas, setFilteredPlantas] = useState([]);
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
@@ -158,6 +159,17 @@ function Mapa() {
       ? { ...centralesData, features: filteredCentrales }
       : centralesData;
 
+  // Decidir qué plantas mostrar (filtradas o todas)
+  const plantasToShow =
+    filteredPlantas.length > 0
+      ? { ...plantasData, features: filteredPlantas }
+      : plantasData;
+
+  const handleFilterChange = (result) => {
+    setFilteredCentrales(result.centrales || []);
+    setFilteredPlantas(result.plantas || []);
+  };
+
   return (
     <MapContainer
       center={mapCenter}
@@ -170,8 +182,9 @@ function Mapa() {
       />
 
       <SearchFilter
-        data={centralesData}
-        onFilterChange={setFilteredCentrales}
+        centralesData={centralesData}
+        plantasData={plantasData}
+        onFilterChange={handleFilterChange}
       />
 
       <LayersControl position="topright">
@@ -196,10 +209,11 @@ function Mapa() {
           </LayersControl.Overlay>
         )}
 
-        {plantasData && (
+        {plantasToShow && (
           <LayersControl.Overlay name="🔌 Plantas Transformadoras" checked>
             <GeoJSON
-              data={plantasData}
+              key={`plantas-${filteredPlantas.length}`}
+              data={plantasToShow}
               pointToLayer={pointToLayerPlanta}
               onEachFeature={onEachFeature}
             />
