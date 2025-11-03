@@ -448,3 +448,18 @@ body {
 .filter-list::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
 }
+
+@keyframes drawPolyline {
+  from {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 0.7;
+  }
+}
+
+.animated-polyline {
+  animation: drawPolyline 1.2s ease-in-out forwards;
+}

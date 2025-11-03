@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
   GeoJSON,
   LayersControl,
   useMap,
+  Polyline,
 } from "react-leaflet";
 import "../App.css";
 import Loader from "../components/Loader";
@@ -37,7 +38,7 @@ const pointToLayerPlanta = (feature, latlng) => {
 };
 
 // Función para crear popups informativos para cada feature
-const onEachFeature = (feature, layer) => {
+const onEachFeature = (feature, layer, { plantasData, onConnectionSelect }) => {
   try {
     if (!feature || !feature.properties) return;
     const props = feature.properties;
@@ -65,6 +66,23 @@ const onEachFeature = (feature, layer) => {
         const p = layer.getPopup();
         if (p) layer.openPopup();
       }
+
+      // Si es una central y tiene planta cercana, buscar coords de la planta y dibujar línea
+      if (feature.geometry && props.nearestPlanta && plantasData) {
+        const [lon, lat] = feature.geometry.coordinates;
+        const plantaFeature = plantasData.features.find(
+          (pf) =>
+            (pf.properties?.fna || pf.properties?.nam) === props.nearestPlanta
+        );
+        if (plantaFeature && plantaFeature.geometry) {
+          const [plantaLon, plantaLat] = plantaFeature.geometry.coordinates;
+          onConnectionSelect({
+            centralCoords: [lat, lon],
+            plantaCoords: [plantaLat, plantaLon],
+            distance: props.nearestDist,
+          });
+        }
+      }
     });
   } catch (err) {
     console.error("Error construyendo popup:", err);
@@ -78,12 +96,34 @@ function MapNavigator({ feature }) {
   useEffect(() => {
     if (map && feature?.geometry?.coordinates) {
       const [lon, lat] = feature.geometry.coordinates;
-      // Centrar y hacer zoom a nivel 12
       map.flyTo([lat, lon], 12, { duration: 1 });
     }
   }, [map, feature]);
 
-  return null; // No renderiza nada visualmente
+  return null;
+}
+
+// Componente con Polyline animada
+function AnimatedPolyline({ connection }) {
+  const polylineRef = useRef(null);
+
+  useEffect(() => {
+    if (polylineRef.current && polylineRef.current._path) {
+      const element = polylineRef.current._path;
+      element.style.animation = "drawPolyline 1.2s ease-in-out forwards";
+    }
+  }, [connection]);
+
+  return (
+    <Polyline
+      ref={polylineRef}
+      positions={[connection.centralCoords, connection.plantaCoords]}
+      color="#4299e1"
+      weight={2}
+      opacity={1}
+      dashArray="5, 5"
+    />
+  );
 }
 
 function FiltersPanel({ tiposDisponibles, filtrosActivos, setFiltrosActivos }) {
@@ -129,7 +169,9 @@ function FiltersPanel({ tiposDisponibles, filtrosActivos, setFiltrosActivos }) {
                   checked={checked}
                   onChange={() => {
                     setFiltrosActivos((prev) =>
-                      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
+                      prev.includes(t)
+                        ? prev.filter((x) => x !== t)
+                        : [...prev, t]
                     );
                   }}
                 />
@@ -155,7 +197,8 @@ function Mapa() {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
   const [filteredCentrales, setFilteredCentrales] = useState([]);
   const [filteredPlantas, setFilteredPlantas] = useState([]);
-  const [selectedFeature, setSelectedFeature] = useState(null); // Feature para navegar
+  const [selectedFeature, setSelectedFeature] = useState(null);
+  const [connection, setConnection] = useState(null); // { centralCoords, plantaCoords, distance }
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
@@ -298,10 +341,11 @@ function Mapa() {
         {centralesToShow && (
           <LayersControl.Overlay name="⚡ Centrales Eléctricas" checked>
             <GeoJSON
-              key={`centrales-${serviceThresholdKm}-${highlightBrechas}-${filtrosActivos.join("|")}-${filteredCentrales.length}`}
+              key={`centrales-${serviceThresholdKm}-${highlightBrechas}-${filtrosActivos.join(
+                "|"
+              )}-${filteredCentrales.length}`}
               data={centralesToShow}
               filter={(feature) => {
-                // Si no hay filtros, no mostramos nada. Por defecto filtrosActivos contiene todos los tipos.
                 if (!filtrosActivos || filtrosActivos.length === 0)
                   return false;
                 const g = feature?.properties?.gna ?? "Sin tipo";
@@ -318,7 +362,12 @@ function Mapa() {
                   interactive: true,
                 });
               }}
-              onEachFeature={onEachFeature}
+              onEachFeature={(feature, layer) =>
+                onEachFeature(feature, layer, {
+                  plantasData,
+                  onConnectionSelect: setConnection,
+                })
+              }
             />
           </LayersControl.Overlay>
         )}
@@ -329,11 +378,21 @@ function Mapa() {
               key={`plantas-${filteredPlantas.length}`}
               data={plantasToShow}
               pointToLayer={pointToLayerPlanta}
-              onEachFeature={onEachFeature}
+              onEachFeature={(feature, layer) =>
+                onEachFeature(feature, layer, {
+                  plantasData: null,
+                  onConnectionSelect: null,
+                })
+              }
             />
           </LayersControl.Overlay>
         )}
       </LayersControl>
+
+      {/* Polyline para visualizar la conexión entre central y planta */}
+      {connection && connection.centralCoords && connection.plantaCoords && (
+        <AnimatedPolyline connection={connection} />
+      )}
 
       <div className="map-legend">
         <div className="legend-title">Leyenda</div>
@@ -353,7 +412,6 @@ function Mapa() {
           filtrosActivos={filtrosActivos}
           setFiltrosActivos={setFiltrosActivos}
         />
-
       </div>
 
       <ThresholdControl
