@@ -335,3 +335,116 @@ body {
 .leaflet-control-layers-separator {
   border-top: 1px solid #4a5568;
 }
+
+.filter-section {
+  margin-top: 8px;
+  /* Usamos un color de borde que ya tienes en tu paleta */
+  border-top: 1px solid #4a5568;
+  padding-top: 8px;
+}
+
+.filter-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #f7fafc; /* Blanco más brillante para el título */
+}
+
+.filter-list {
+  /* Limitamos la altura y permitimos scroll si hay muchos filtros */
+  max-height: 150px;
+  overflow-y: auto;
+  /* Espaciado para que el scrollbar no tape el texto */
+  padding-right: 5px;
+}
+
+.filter-loading {
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+/* /* Checkbox Personalizado 
+/* ------------------------------------------------ */
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+  position: relative;
+  /* Hacemos que el texto no se pueda seleccionar */
+  user-select: none;
+}
+
+.filter-label-text {
+  font-size: 12px;
+  color: #e2e8f0;
+  padding-left: 8px; /* Separación del checkbox */
+}
+
+/* 1. Ocultamos el checkbox original */
+.filter-item input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+/* 2. Creamos la caja del checkbox falso */
+.custom-checkbox {
+  flex-shrink: 0; /* Evita que se encoja */
+  width: 16px;
+  height: 16px;
+  background-color: #1A202C; /* Fondo oscuro */
+  border: 1px solid #4a5568; /* Borde sutil */
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+/* 3. Creamos el "check" (la marca) usando un pseudo-elemento */
+.custom-checkbox::after {
+  content: '';
+  position: absolute;
+  display: none; /* Oculto por defecto */
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid #ffffff; /* Color del check */
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* 4. Estilos al pasar el mouse */
+.filter-item:hover .custom-checkbox {
+  border-color: #4299e1; /* Resaltamos con el color azul de acento */
+}
+
+/* 5. Estilos cuando el checkbox está MARCADO */
+.filter-item input[type="checkbox"]:checked ~ .custom-checkbox {
+  background-color: #4299e1; /* Fondo azul */
+  border-color: #4299e1;
+}
+
+/* 6. Mostramos el "check" cuando está marcado */
+.filter-item input[type="checkbox"]:checked ~ .custom-checkbox::after {
+  display: block;
+}
+
+/* /* Scrollbar Personalizado (para Webkit/Blink: Chrome, Safari, Edge)
+/* ------------------------------------------------ */
+.filter-list::-webkit-scrollbar {
+  width: 6px;
+}
+.filter-list::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+  border-radius: 3px;
+}
+.filter-list::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 3px;
+}
+.filter-list::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}

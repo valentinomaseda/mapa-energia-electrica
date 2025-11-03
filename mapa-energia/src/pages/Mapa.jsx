@@ -18,7 +18,9 @@ const iconoCentral = new L.DivIcon({
 
 const iconoPlanta = new L.DivIcon({
   className: "icono-planta-transformadora-img",
-  html: `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center"><img src="${import.meta.env.BASE_URL}planta_transformadora_icon.svg" alt="planta" style="width:16px;height:16px;display:block"/></div>`,
+  html: `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center"><img src="${
+    import.meta.env.BASE_URL
+  }planta_transformadora_icon.svg" alt="planta" style="width:16px;height:16px;display:block"/></div>`,
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
@@ -68,11 +70,73 @@ const onEachFeature = (feature, layer) => {
   }
 };
 
+function FiltersPanel({ tiposDisponibles, filtrosActivos, setFiltrosActivos }) {
+  const map = useMap();
+
+  const handleMouseEnter = () => {
+    try {
+      if (map && map.scrollWheelZoom) map.scrollWheelZoom.disable();
+    } catch (err) {
+      void err;
+      // ignore
+    }
+  };
+  const handleMouseLeave = () => {
+    try {
+      if (map && map.scrollWheelZoom) map.scrollWheelZoom.enable();
+    } catch (err) {
+      void err;
+      // ignore
+    }
+  };
+
+  return (
+    <div
+      className="filter-section"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onWheel={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+    >
+      <div className="filter-title">Filtrar por tipo</div>
+
+      <div className="filter-list">
+        {tiposDisponibles && tiposDisponibles.length > 0 ? (
+          tiposDisponibles.map((t) => {
+            const id = `filter-${t.replace(/\s+/g, "-").toLowerCase()}`;
+            const checked = filtrosActivos.includes(t);
+            return (
+              <label key={t} htmlFor={id} className="filter-item">
+                <input
+                  id={id}
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => {
+                    setFiltrosActivos((prev) =>
+                      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
+                    );
+                  }}
+                />
+                <span className="custom-checkbox"></span>
+                <span className="filter-label-text">{t}</span>
+              </label>
+            );
+          })
+        ) : (
+          <div className="filter-loading">Cargando tipos...</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Mapa() {
   const [centralesData, setCentralesData] = useState(null);
   const [plantasData, setPlantasData] = useState(null);
   const [serviceThresholdKm, setServiceThresholdKm] = useState(10);
   const [highlightBrechas, setHighlightBrechas] = useState(true);
+  const [tiposDisponibles, setTiposDisponibles] = useState([]);
+  const [filtrosActivos, setFiltrosActivos] = useState([]);
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
@@ -137,6 +201,23 @@ function Mapa() {
 
         setCentralesData(centrales);
         setPlantasData(plantas);
+
+        // Calcular tipos disponibles (propiedad gna) y activar todos por defecto
+        try {
+          const tiposSet = new Set();
+          centrales.features.forEach((f) => {
+            const raw = f?.properties?.gna ?? "Sin tipo";
+            const g = String(raw).trim();
+            // Excluir entrada genérica/ruido "Central" para evitar un checkbox que no filtra nada
+            if (g.toLowerCase() === "central") return;
+            tiposSet.add(g);
+          });
+          const tiposArr = Array.from(tiposSet).sort();
+          setTiposDisponibles(tiposArr);
+          setFiltrosActivos(tiposArr.slice());
+        } catch (e) {
+          console.error("Error calculando tipos disponibles:", e);
+        }
       } catch (err) {
         console.error("Error al cargar los datos:", err);
       }
@@ -163,12 +244,27 @@ function Mapa() {
         {centralesData && (
           <LayersControl.Overlay name="⚡ Centrales Eléctricas" checked>
             <GeoJSON
-              key={`centrales-${serviceThresholdKm}-${highlightBrechas}`}
+              key={`centrales-${serviceThresholdKm}-${highlightBrechas}-${filtrosActivos.join(
+                "|"
+              )}`}
               data={centralesData}
+              filter={(feature) => {
+                // Si no hay filtros, no mostramos nada. Por defecto filtrosActivos contiene todos los tipos.
+                if (!filtrosActivos || filtrosActivos.length === 0)
+                  return false;
+                const g = feature?.properties?.gna ?? "Sin tipo";
+                return filtrosActivos.includes(g);
+              }}
               pointToLayer={(feature, latlng) => {
                 const d = feature?.properties?.nearestDist;
-                const useRed = typeof d === 'number' && d >= serviceThresholdKm && highlightBrechas;
-                return L.marker(latlng, { icon: useRed ? iconoCentralRoja : iconoCentral, interactive: true });
+                const useRed =
+                  typeof d === "number" &&
+                  d >= serviceThresholdKm &&
+                  highlightBrechas;
+                return L.marker(latlng, {
+                  icon: useRed ? iconoCentralRoja : iconoCentral,
+                  interactive: true,
+                });
               }}
               onEachFeature={onEachFeature}
             />
@@ -184,7 +280,6 @@ function Mapa() {
             />
           </LayersControl.Overlay>
         )}
-
       </LayersControl>
 
       <div className="map-legend">
@@ -199,6 +294,13 @@ function Mapa() {
           <div className="legend-sym brecha" />{" "}
           <div>Brecha (≥ {serviceThresholdKm} km)</div>
         </div>
+        {/* Filtros por tipo de planta */}
+        <FiltersPanel
+          tiposDisponibles={tiposDisponibles}
+          filtrosActivos={filtrosActivos}
+          setFiltrosActivos={setFiltrosActivos}
+        />
+
       </div>
 
       <ThresholdControl
@@ -237,7 +339,8 @@ function ThresholdControl({ value, onChange, highlight, setHighlight }) {
           marginBottom: 6,
         }}
       >
-        Umbral de distancia (km): <strong style={{ color: "#fff" }}>{value}</strong>
+        Umbral de distancia (km):{" "}
+        <strong style={{ color: "#fff" }}>{value}</strong>
       </label>
       <input
         type="range"
@@ -253,7 +356,9 @@ function ThresholdControl({ value, onChange, highlight, setHighlight }) {
         onMouseDown={handlePointerDown}
         onMouseUp={handlePointerUp}
       />
-      <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+      <div
+        style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}
+      >
         <input
           id="highlight-brechas"
           type="checkbox"
@@ -261,7 +366,10 @@ function ThresholdControl({ value, onChange, highlight, setHighlight }) {
           onChange={(e) => setHighlight && setHighlight(e.target.checked)}
           style={{ cursor: "pointer" }}
         />
-        <label htmlFor="highlight-brechas" style={{ color: "#e2e8f0", fontSize: 12 }}>
+        <label
+          htmlFor="highlight-brechas"
+          style={{ color: "#e2e8f0", fontSize: 12 }}
+        >
           Resaltar brechas
         </label>
       </div>
