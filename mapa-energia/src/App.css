@@ -92,6 +92,27 @@ body {
   filter: drop-shadow(0 0 5px #4299e1);
 }
 
+.navbar-doc-button {
+  text-decoration: none;
+  color: #a0aec0;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid #4a5568;
+  background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar-doc-button:hover {
+  color: #f7fafc;
+  background-color: #4a5568;
+  border-color: #4299e1;
+}
+
 .inicio-container {
   flex: 1;
   display: flex;
@@ -462,4 +483,35 @@ body {
 
 .animated-polyline {
   animation: drawPolyline 1.2s ease-in-out forwards;
+}
+
+
+.navbar-doc-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  border: 1px solid #4a5568; /* Borde sutil gris */
+  color: #a0aec0; /* Color del icono (gris claro) */
+  border-radius: 8px; /* Bordes redondeados */
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.navbar-doc-button:hover,
+.navbar-doc-button:focus {
+  background-color: #4a5568; /* Fondo más claro al pasar el mouse */
+  color: #ffffff; /* Icono blanco */
+  border-color: #a0aec0;
+  transform: scale(1.05); /* Ligero zoom */
+  /* Sombra de acento azul, como la de los filtros */
+  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2); 
+  outline: none;
+}
+
+.navbar-doc-button:active {
+  transform: scale(0.95);
+  background-color: #1A202C; /* Fondo más oscuro al hacer clic */
 }

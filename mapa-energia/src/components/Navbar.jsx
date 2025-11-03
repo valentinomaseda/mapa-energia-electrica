@@ -1,11 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from './Button';
+import docLogo from '../assets/doc.svg';
 
 function Navbar() {
+
+  const driveDocUrl = "https://drive.google.com/file/d/1U1aOW3Y6oZgD-em1c0TSS9sWm_B0uIlI/view?usp=sharing"; 
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+          {/* Este es tu logo de rayo, lo dejamos igual */}
           <svg 
             width="24" 
             height="24" 
@@ -25,6 +31,10 @@ function Navbar() {
             Proyecto SIG // <span className="text-accent-blue">Red Energética</span>
           </span>
         </Link>
+      </div>
+
+      <div className="navbar-links">
+        <Button text='Documentación' onClick={() => window.open(driveDocUrl, "_blank")} icon={<img src={docLogo} alt="doc" style={{ width: '24px', height: '24px' }} />} />
       </div>
     </nav>
   );
