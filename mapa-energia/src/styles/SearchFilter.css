@@ -1,9 +1,13 @@
+/*
+/* Estilos para el SearchFilter
+/* ------------------------------------------------ */
+
 .search-filter-container {
   position: absolute;
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 500;
+  z-index: 500; /* Aseguramos que esté sobre el mapa pero debajo de popups */
   width: 90%;
   max-width: 450px;
 }
@@ -11,46 +15,76 @@
 .search-filter-wrapper {
   display: flex;
   align-items: center;
-  background-color: rgba(15, 23, 42, 0.95);
-  border: 2px solid rgba(226, 232, 240, 0.2);
+  background-color: rgba(15, 23, 42, 0.9); /* Un poco más opaco */
+  border: 1px solid #4a5568; /* Usamos el color de borde de App.css */
   border-radius: 8px;
   padding: 8px 12px;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s ease-in-out;
 }
 
+/* --- NUEVO: Estado de Foco (focus-within) --- */
+/* Se activa cuando un elemento hijo (input o select) tiene el foco */
+.search-filter-wrapper:focus-within {
+  border-color: #4299e1; /* Color de acento azul */
+  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+}
+
+/* --- NUEVO: Estilo del icono de Lupa --- */
+.search-filter-icon {
+  color: #a0aec0; /* Gris claro (tomado de App.css) */
+  flex-shrink: 0;
+  /* Alineación fina del icono */
+  display: flex;
+  align-items: center;
+}
+
+/* --- MEJORADO: Estilo del Select --- */
 .search-filter-select {
-  background-color: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(226, 232, 240, 0.2);
+  background-color: rgba(30, 41, 59, 0.9);
+  border: 1px solid #4a5568; /* Borde consistente */
   color: #e2e8f0;
-  padding: 6px 8px;
+  padding: 6px 30px 6px 10px; /* Espacio derecha para la flecha custom */
   border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
   min-width: 130px;
+  
+  /* --- NUEVO: Ocultar flecha nativa --- */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* --- NUEVO: Flecha custom (SVG como data-uri) --- */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a0aec0'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px 16px;
 }
 
 .search-filter-select:hover {
-  border-color: rgba(226, 232, 240, 0.4);
-  background-color: rgba(30, 41, 59, 1);
+  border-color: #a0aec0;
+  background-color: #2d3748;
 }
 
 .search-filter-select:focus {
   outline: none;
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  /* El :focus-within del wrapper ya se encarga del brillo */
 }
 
+/* Opciones del dropdown */
 .search-filter-select option {
-  background-color: #1e293b;
+  background-color: #2d3748;
   color: #e2e8f0;
 }
 
+/* --- MEJORADO: Estilo del Input --- */
 .search-filter-input {
-  flex: 1;
+  flex: 1; /* Ocupa el espacio restante */
   background: transparent;
   border: none;
   color: #e2e8f0;
@@ -58,53 +92,96 @@
   outline: none;
   padding: 4px 0;
   font-family: inherit;
+  /* Separador sutil */
+  border-left: 1px solid #4a5568;
+  padding-left: 10px;
 }
 
 .search-filter-input::placeholder {
-  color: rgba(226, 232, 240, 0.5);
+  color: #a0aec0;
 }
 
+/* --- MEJORADO: Botón de Limpiar (X) --- */
 .search-filter-clear {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: rgba(226, 232, 240, 0.7);
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px 8px;
+  color: #e2e8f0;
+  border-radius: 50%; /* Círculo perfecto */
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
 }
 
 .search-filter-clear:hover {
-  color: #e2e8f0;
+  background: rgba(239, 68, 68, 0.8); /* Rojo al pasar el mouse */
+  color: #fff;
 }
 
+/* --- NUEVO: Estilo del texto de resultados --- */
 .search-filter-info {
   margin-top: 8px;
-  text-align: center;
-  color: rgba(226, 232, 240, 0.7);
-  font-size: 12px;
-  padding: 4px 8px;
-  background-color: rgba(15, 23, 42, 0.95);
+  float: right; /* Lo alineamos a la derecha */
+  font-size: 11px;
+  font-weight: 500;
+  color: #e2e8f0;
+  background-color: rgba(15, 23, 42, 0.9);
+  border: 1px solid #4a5568;
+  padding: 3px 8px;
   border-radius: 6px;
-  border: 1px solid rgba(226, 232, 240, 0.1);
+  backdrop-filter: blur(8px);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .search-filter-container {
-    width: 95%;
-    max-width: 350px;
-  }
+/* --- NUEVO: Dropdown de sugerencias --- */
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: rgba(15, 23, 42, 0.95);
+  border: 1px solid #4a5568;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 501;
+  margin-top: -1px;
+}
 
-  .search-filter-input {
-    font-size: 13px;
-  }
+.search-suggestion-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.15s ease;
+}
 
-  .search-filter-select {
-    font-size: 12px;
-    min-width: 110px;
-  }
+.search-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.search-suggestion-item:hover {
+  background-color: rgba(66, 153, 225, 0.2);
+}
+
+.search-suggestion-item:active {
+  background-color: rgba(66, 153, 225, 0.3);
+}
+
+.suggestion-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #f7fafc;
+  margin-bottom: 3px;
+}
+
+.suggestion-type {
+  font-size: 11px;
+  color: #a0aec0;
+  font-style: italic;
 }

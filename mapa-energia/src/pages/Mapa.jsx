@@ -71,6 +71,21 @@ const onEachFeature = (feature, layer) => {
   }
 };
 
+// Componente que usa useMap() para centrar la vista en un feature seleccionado
+function MapNavigator({ feature }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (map && feature?.geometry?.coordinates) {
+      const [lon, lat] = feature.geometry.coordinates;
+      // Centrar y hacer zoom a nivel 12
+      map.flyTo([lat, lon], 12, { duration: 1 });
+    }
+  }, [map, feature]);
+
+  return null; // No renderiza nada visualmente
+}
+
 function FiltersPanel({ tiposDisponibles, filtrosActivos, setFiltrosActivos }) {
   const map = useMap();
 
@@ -140,6 +155,7 @@ function Mapa() {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
   const [filteredCentrales, setFilteredCentrales] = useState([]);
   const [filteredPlantas, setFilteredPlantas] = useState([]);
+  const [selectedFeature, setSelectedFeature] = useState(null); // Feature para navegar
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
@@ -249,6 +265,14 @@ function Mapa() {
     setFilteredPlantas(result.plantas || []);
   };
 
+  // Callback para navegar a un feature cuando se selecciona desde sugerencias
+  const handleSelectFeature = (feature) => {
+    if (feature?.geometry?.coordinates) {
+      // Simplemente guardamos el feature; MapNavigator se encargará de centrar
+      setSelectedFeature(feature);
+    }
+  };
+
   return (
     <MapContainer
       center={mapCenter}
@@ -264,7 +288,11 @@ function Mapa() {
         centralesData={centralesData}
         plantasData={plantasData}
         onFilterChange={handleFilterChange}
+        onSelectFeature={handleSelectFeature}
       />
+
+      {/* Componente que maneja la navegación del mapa hacia un feature seleccionado */}
+      {selectedFeature && <MapNavigator feature={selectedFeature} />}
 
       <LayersControl position="topright">
         {centralesToShow && (
