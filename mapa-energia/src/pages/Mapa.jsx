@@ -23,19 +23,17 @@ const iconoPlanta = new L.DivIcon({
   iconAnchor: [12, 12],
 });
 
-// Icono de central en estado 'brecha' (rojo)
 const iconoCentralRoja = new L.DivIcon({
   className: "icono-central-electrica-roja",
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
 
-// NOTE: no se usa un icono separado para "brecha"; cambiaremos el color del icono de central.
-
 const pointToLayerPlanta = (feature, latlng) => {
   return L.marker(latlng, { icon: iconoPlanta, interactive: true });
 };
 
+// Función para crear popups informativos para cada feature
 const onEachFeature = (feature, layer) => {
   try {
     if (!feature || !feature.properties) return;
@@ -74,11 +72,11 @@ function Mapa() {
   const [centralesData, setCentralesData] = useState(null);
   const [plantasData, setPlantasData] = useState(null);
   const [serviceThresholdKm, setServiceThresholdKm] = useState(10);
-  // Controla si las centrales que superan el umbral se muestran en rojo
   const [highlightBrechas, setHighlightBrechas] = useState(true);
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
+  // Cargar datos GeoJSON al montar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -125,7 +123,6 @@ function Mapa() {
               cent.properties.nearestDist = isFinite(nearest.dist)
                 ? nearest.dist
                 : null;
-              // Intentamos obtener un nombre identificador de la planta cercana
               const nombrePlanta =
                 plantas.features[nearest.plantaIdx]?.properties?.fna ||
                 plantas.features[nearest.plantaIdx]?.properties?.nam ||
@@ -147,7 +144,6 @@ function Mapa() {
     fetchData();
   }, []);
 
-  // Mostrar loader mientras no se han cargado ambos GeoJSON
   if (!centralesData || !plantasData) {
     return <Loader />;
   }
