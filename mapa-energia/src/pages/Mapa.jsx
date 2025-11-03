@@ -8,6 +8,7 @@ import {
 } from "react-leaflet";
 import "../App.css";
 import Loader from "../components/Loader";
+import SearchFilter from "../components/SearchFilter";
 import L from "leaflet";
 
 const iconoCentral = new L.DivIcon({
@@ -137,6 +138,8 @@ function Mapa() {
   const [highlightBrechas, setHighlightBrechas] = useState(true);
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
   const [filtrosActivos, setFiltrosActivos] = useState([]);
+  const [filteredCentrales, setFilteredCentrales] = useState([]);
+  const [filteredPlantas, setFilteredPlantas] = useState([]);
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
@@ -229,6 +232,23 @@ function Mapa() {
     return <Loader />;
   }
 
+  // Decidir qué centrales mostrar (filtradas o todas)
+  const centralesToShow =
+    filteredCentrales.length > 0
+      ? { ...centralesData, features: filteredCentrales }
+      : centralesData;
+
+  // Decidir qué plantas mostrar (filtradas o todas)
+  const plantasToShow =
+    filteredPlantas.length > 0
+      ? { ...plantasData, features: filteredPlantas }
+      : plantasData;
+
+  const handleFilterChange = (result) => {
+    setFilteredCentrales(result.centrales || []);
+    setFilteredPlantas(result.plantas || []);
+  };
+
   return (
     <MapContainer
       center={mapCenter}
@@ -240,14 +260,18 @@ function Mapa() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
 
+      <SearchFilter
+        centralesData={centralesData}
+        plantasData={plantasData}
+        onFilterChange={handleFilterChange}
+      />
+
       <LayersControl position="topright">
-        {centralesData && (
+        {centralesToShow && (
           <LayersControl.Overlay name="⚡ Centrales Eléctricas" checked>
             <GeoJSON
-              key={`centrales-${serviceThresholdKm}-${highlightBrechas}-${filtrosActivos.join(
-                "|"
-              )}`}
-              data={centralesData}
+              key={`centrales-${serviceThresholdKm}-${highlightBrechas}-${filtrosActivos.join("|")}-${filteredCentrales.length}`}
+              data={centralesToShow}
               filter={(feature) => {
                 // Si no hay filtros, no mostramos nada. Por defecto filtrosActivos contiene todos los tipos.
                 if (!filtrosActivos || filtrosActivos.length === 0)
@@ -271,10 +295,11 @@ function Mapa() {
           </LayersControl.Overlay>
         )}
 
-        {plantasData && (
+        {plantasToShow && (
           <LayersControl.Overlay name="🔌 Plantas Transformadoras" checked>
             <GeoJSON
-              data={plantasData}
+              key={`plantas-${filteredPlantas.length}`}
+              data={plantasToShow}
               pointToLayer={pointToLayerPlanta}
               onEachFeature={onEachFeature}
             />

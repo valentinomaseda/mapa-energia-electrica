@@ -1,0 +1,110 @@
+.search-filter-container {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  width: 90%;
+  max-width: 450px;
+}
+
+.search-filter-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: rgba(15, 23, 42, 0.95);
+  border: 2px solid rgba(226, 232, 240, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.search-filter-select {
+  background-color: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.2);
+  color: #e2e8f0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  min-width: 130px;
+}
+
+.search-filter-select:hover {
+  border-color: rgba(226, 232, 240, 0.4);
+  background-color: rgba(30, 41, 59, 1);
+}
+
+.search-filter-select:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.search-filter-select option {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+.search-filter-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 14px;
+  outline: none;
+  padding: 4px 0;
+  font-family: inherit;
+}
+
+.search-filter-input::placeholder {
+  color: rgba(226, 232, 240, 0.5);
+}
+
+.search-filter-clear {
+  background: none;
+  border: none;
+  color: rgba(226, 232, 240, 0.7);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.search-filter-clear:hover {
+  color: #e2e8f0;
+}
+
+.search-filter-info {
+  margin-top: 8px;
+  text-align: center;
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 12px;
+  padding: 4px 8px;
+  background-color: rgba(15, 23, 42, 0.95);
+  border-radius: 6px;
+  border: 1px solid rgba(226, 232, 240, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .search-filter-container {
+    width: 95%;
+    max-width: 350px;
+  }
+
+  .search-filter-input {
+    font-size: 13px;
+  }
+
+  .search-filter-select {
+    font-size: 12px;
+    min-width: 110px;
+  }
+}
