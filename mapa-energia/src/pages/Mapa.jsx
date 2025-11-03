@@ -37,6 +37,57 @@ const pointToLayerPlanta = (feature, latlng) => {
   return L.marker(latlng, { icon: iconoPlanta, interactive: true });
 };
 
+// Función para determinar el color y grosor de línea según el voltaje
+const getLineStyle = (voltage) => {
+  const voltageNum = parseInt(voltage);
+  
+  // Colores y grosores según el voltaje
+  if (voltageNum >= 500) {
+    return { color: '#FF1744', weight: 4 }; // Rojo brillante - Extra alta tensión
+  } else if (voltageNum >= 330) {
+    return { color: '#FF9100', weight: 3.5 }; // Naranja - Muy alta tensión
+  } else if (voltageNum >= 220) {
+    return { color: '#FFD600', weight: 3 }; // Amarillo - Alta tensión
+  } else if (voltageNum >= 132) {
+    return { color: '#00E676', weight: 2.5 }; // Verde - Media tensión
+  } else {
+    return { color: '#00B0FF', weight: 2 }; // Azul - Baja tensión
+  }
+};
+
+// Función para crear popups informativos para líneas
+const onEachLineFeature = (feature, layer) => {
+  try {
+    if (!feature || !feature.properties) return;
+    const props = feature.properties;
+    
+    let popupContent = `<h4>⚡ Línea de Energía</h4>`;
+    
+    if (props.NOMBRE) {
+      popupContent += `<strong>Nombre:</strong> ${props.NOMBRE}<br/>`;
+    }
+    if (props.TENSION) {
+      popupContent += `<strong>Tensión:</strong> ${props.TENSION} kV<br/>`;
+    }
+    if (props.SECCION) {
+      popupContent += `<strong>Sección:</strong> ${props.SECCION}<br/>`;
+    }
+    if (props.FECHA_PUES) {
+      popupContent += `<strong>Fecha de puesta:</strong> ${props.FECHA_PUES}<br/>`;
+    }
+    if (props.PROPIEDAD) {
+      popupContent += `<strong>Propiedad:</strong> ${props.PROPIEDAD}<br/>`;
+    }
+    if (props.CONCESION) {
+      popupContent += `<strong>Concesión:</strong> ${props.CONCESION}<br/>`;
+    }
+    
+    layer.bindPopup(popupContent);
+  } catch (err) {
+    console.error("Error construyendo popup de línea:", err);
+  }
+};
+
 // Función para crear popups informativos para cada feature
 const onEachFeature = (feature, layer, { plantasData, onConnectionSelect }) => {
   try {
@@ -191,6 +242,7 @@ function FiltersPanel({ tiposDisponibles, filtrosActivos, setFiltrosActivos }) {
 function Mapa() {
   const [centralesData, setCentralesData] = useState(null);
   const [plantasData, setPlantasData] = useState(null);
+  const [lineasData, setLineasData] = useState(null);
   const [serviceThresholdKm, setServiceThresholdKm] = useState(10);
   const [highlightBrechas, setHighlightBrechas] = useState(true);
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
@@ -206,13 +258,15 @@ function Mapa() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [centralesRes, plantasRes] = await Promise.all([
+        const [centralesRes, plantasRes, lineasRes] = await Promise.all([
           fetch(`${import.meta.env.BASE_URL}central_electrica.geojson`),
           fetch(`${import.meta.env.BASE_URL}planta_transformadora.geojson`),
+          fetch(`${import.meta.env.BASE_URL}lineas_de_energia.geojson`),
         ]);
 
         const centrales = await centralesRes.json();
         const plantas = await plantasRes.json();
+        const lineas = await lineasRes.json();
 
         // Calculamos la distancia a la planta más cercana para cada central
         const haversineKm = (lat1, lon1, lat2, lon2) => {
@@ -263,6 +317,7 @@ function Mapa() {
 
         setCentralesData(centrales);
         setPlantasData(plantas);
+        setLineasData(lineas);
 
         // Calcular tipos disponibles (propiedad gna) y activar todos por defecto
         try {
@@ -287,7 +342,7 @@ function Mapa() {
     fetchData();
   }, []);
 
-  if (!centralesData || !plantasData) {
+  if (!centralesData || !plantasData || !lineasData) {
     return <Loader />;
   }
 
@@ -387,6 +442,25 @@ function Mapa() {
             />
           </LayersControl.Overlay>
         )}
+
+        {lineasData && (
+          <LayersControl.Overlay name="⚡ Líneas de Transmisión" checked>
+            <GeoJSON
+              key="lineas-energia"
+              data={lineasData}
+              style={(feature) => {
+                const voltage = feature?.properties?.TENSION || "132";
+                const baseStyle = getLineStyle(voltage);
+                return {
+                  ...baseStyle,
+                  opacity: 0.8,
+                  dashArray: "5, 5",
+                };
+              }}
+              onEachFeature={onEachLineFeature}
+            />
+          </LayersControl.Overlay>
+        )}
       </LayersControl>
 
       {/* Polyline para visualizar la conexión entre central y planta */}
@@ -406,6 +480,31 @@ function Mapa() {
           <div className="legend-sym brecha" />{" "}
           <div>Brecha (≥ {serviceThresholdKm} km)</div>
         </div>
+        
+        {/* Leyenda de voltajes */}
+        <div className="legend-divider"></div>
+        <div className="legend-subtitle">Líneas por Tensión</div>
+        <div className="legend-item">
+          <div className="legend-line" style={{ backgroundColor: '#FF1744' }}></div>
+          <div>≥ 500 kV</div>
+        </div>
+        <div className="legend-item">
+          <div className="legend-line" style={{ backgroundColor: '#FF9100' }}></div>
+          <div>330-499 kV</div>
+        </div>
+        <div className="legend-item">
+          <div className="legend-line" style={{ backgroundColor: '#FFD600' }}></div>
+          <div>220-329 kV</div>
+        </div>
+        <div className="legend-item">
+          <div className="legend-line" style={{ backgroundColor: '#00E676' }}></div>
+          <div>132-219 kV</div>
+        </div>
+        <div className="legend-item">
+          <div className="legend-line" style={{ backgroundColor: '#00B0FF' }}></div>
+          <div>&lt; 132 kV</div>
+        </div>
+        
         {/* Filtros por tipo de planta */}
         <FiltersPanel
           tiposDisponibles={tiposDisponibles}
