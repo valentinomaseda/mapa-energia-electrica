@@ -8,6 +8,7 @@ import {
 } from "react-leaflet";
 import "../App.css";
 import Loader from "../components/Loader";
+import SearchFilter from "../components/SearchFilter";
 import L from "leaflet";
 
 const iconoCentral = new L.DivIcon({
@@ -18,7 +19,9 @@ const iconoCentral = new L.DivIcon({
 
 const iconoPlanta = new L.DivIcon({
   className: "icono-planta-transformadora-img",
-  html: `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center"><img src="${import.meta.env.BASE_URL}planta_transformadora_icon.svg" alt="planta" style="width:16px;height:16px;display:block"/></div>`,
+  html: `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center"><img src="${
+    import.meta.env.BASE_URL
+  }planta_transformadora_icon.svg" alt="planta" style="width:16px;height:16px;display:block"/></div>`,
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
@@ -73,6 +76,7 @@ function Mapa() {
   const [plantasData, setPlantasData] = useState(null);
   const [serviceThresholdKm, setServiceThresholdKm] = useState(10);
   const [highlightBrechas, setHighlightBrechas] = useState(true);
+  const [filteredCentrales, setFilteredCentrales] = useState([]);
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
@@ -148,6 +152,12 @@ function Mapa() {
     return <Loader />;
   }
 
+  // Decidir qué centrales mostrar (filtradas o todas)
+  const centralesToShow =
+    filteredCentrales.length > 0
+      ? { ...centralesData, features: filteredCentrales }
+      : centralesData;
+
   return (
     <MapContainer
       center={mapCenter}
@@ -159,16 +169,27 @@ function Mapa() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
 
+      <SearchFilter
+        data={centralesData}
+        onFilterChange={setFilteredCentrales}
+      />
+
       <LayersControl position="topright">
-        {centralesData && (
+        {centralesToShow && (
           <LayersControl.Overlay name="⚡ Centrales Eléctricas" checked>
             <GeoJSON
-              key={`centrales-${serviceThresholdKm}-${highlightBrechas}`}
-              data={centralesData}
+              key={`centrales-${serviceThresholdKm}-${highlightBrechas}-${filteredCentrales.length}`}
+              data={centralesToShow}
               pointToLayer={(feature, latlng) => {
                 const d = feature?.properties?.nearestDist;
-                const useRed = typeof d === 'number' && d >= serviceThresholdKm && highlightBrechas;
-                return L.marker(latlng, { icon: useRed ? iconoCentralRoja : iconoCentral, interactive: true });
+                const useRed =
+                  typeof d === "number" &&
+                  d >= serviceThresholdKm &&
+                  highlightBrechas;
+                return L.marker(latlng, {
+                  icon: useRed ? iconoCentralRoja : iconoCentral,
+                  interactive: true,
+                });
               }}
               onEachFeature={onEachFeature}
             />
@@ -184,7 +205,6 @@ function Mapa() {
             />
           </LayersControl.Overlay>
         )}
-
       </LayersControl>
 
       <div className="map-legend">
@@ -237,7 +257,8 @@ function ThresholdControl({ value, onChange, highlight, setHighlight }) {
           marginBottom: 6,
         }}
       >
-        Umbral de distancia (km): <strong style={{ color: "#fff" }}>{value}</strong>
+        Umbral de distancia (km):{" "}
+        <strong style={{ color: "#fff" }}>{value}</strong>
       </label>
       <input
         type="range"
@@ -253,7 +274,9 @@ function ThresholdControl({ value, onChange, highlight, setHighlight }) {
         onMouseDown={handlePointerDown}
         onMouseUp={handlePointerUp}
       />
-      <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+      <div
+        style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}
+      >
         <input
           id="highlight-brechas"
           type="checkbox"
@@ -261,7 +284,10 @@ function ThresholdControl({ value, onChange, highlight, setHighlight }) {
           onChange={(e) => setHighlight && setHighlight(e.target.checked)}
           style={{ cursor: "pointer" }}
         />
-        <label htmlFor="highlight-brechas" style={{ color: "#e2e8f0", fontSize: 12 }}>
+        <label
+          htmlFor="highlight-brechas"
+          style={{ color: "#e2e8f0", fontSize: 12 }}
+        >
           Resaltar brechas
         </label>
       </div>
