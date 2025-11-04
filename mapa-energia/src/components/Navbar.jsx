@@ -6,7 +6,7 @@ import teamLogo from '../assets/team.svg';
 
 function Navbar() {
   const navigate = useNavigate();
-  const driveDocUrl = "https://drive.google.com/file/d/1U1aOW3Y6oZgD-em1c0TSS9sWm_B0uIlI/view?usp=sharing"; 
+  const driveDocUrl = "https://drive.google.com/file/d/1ZY1kpo4m-WikL4LPY16BCqlPPDefrNJg/view?usp=sharing"; 
 
   return (
     <nav className="navbar">
