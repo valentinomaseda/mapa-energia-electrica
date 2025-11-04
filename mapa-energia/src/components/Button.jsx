@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-const Button = ({text, onClick, icon}) => {
+const Button = ({ text, onClick, icon }) => {
   return (
     <StyledWrapper>
       <button className="cta" onClick={onClick}>
@@ -10,7 +10,7 @@ const Button = ({text, onClick, icon}) => {
       </button>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
   .cta {
@@ -20,7 +20,8 @@ const StyledWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Exo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: "Exo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     font-weight: 600;
   }
 
@@ -28,7 +29,7 @@ const StyledWrapper = styled.div`
     letter-spacing: 1px;
     font-size: 18px;
     padding-right: 15px;
-    padding-bottom: 3px;
+    padding-bottom: 4px;
   }
 
   .cta svg,
@@ -50,7 +51,6 @@ const StyledWrapper = styled.div`
   .hover-underline-animation {
     position: relative;
     color: white;
-
   }
 
   .hover-underline-animation:after {
@@ -69,6 +69,7 @@ const StyledWrapper = styled.div`
   .cta:hover .hover-underline-animation:after {
     transform: scaleX(1);
     transform-origin: bottom left;
-  }`;
+  }
+`;
 
 export default Button;

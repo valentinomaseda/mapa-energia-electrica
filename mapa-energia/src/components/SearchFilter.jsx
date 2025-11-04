@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../styles/SearchFilter.css";
 
 const SearchIcon = () => (
@@ -35,6 +35,20 @@ function SearchFilter({ centralesData, plantasData, onFilterChange, onSelectFeat
   const [searchType, setSearchType] = useState("central");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     const term = e.target.value;
@@ -174,7 +188,7 @@ function SearchFilter({ centralesData, plantasData, onFilterChange, onSelectFeat
   };
 
   return (
-    <div className="search-filter-container">
+    <div className="search-filter-container" ref={containerRef}>
       <div className="search-filter-wrapper">
         <SearchIcon />
 

@@ -1,17 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from './Button';
 import docLogo from '../assets/doc.svg';
+import teamLogo from '../assets/team.svg';
 
 function Navbar() {
-
+  const navigate = useNavigate();
   const driveDocUrl = "https://drive.google.com/file/d/1U1aOW3Y6oZgD-em1c0TSS9sWm_B0uIlI/view?usp=sharing"; 
 
   return (
     <nav className="navbar">
       <div className="navbar-logo">
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-          {/* Este es tu logo de rayo, lo dejamos igual */}
           <svg 
             width="24" 
             height="24" 
@@ -34,7 +34,8 @@ function Navbar() {
       </div>
 
       <div className="navbar-links">
-        <Button text='Documentación' onClick={() => window.open(driveDocUrl, "_blank")} icon={<img src={docLogo} alt="doc" style={{ width: '24px', height: '24px' }} />} />
+        <Button text='Equipo' onClick={() => navigate('/equipo')} icon={<img src={teamLogo} alt="doc" style={{ width: '24px', height: '24px' }} />} />
+        <Button text='Documentación' onClick={() => window.open(driveDocUrl, "_blank")} icon={<img src={docLogo} alt="doc" style={{ width: '20px', height: '20px' }} />} />
       </div>
     </nav>
   );

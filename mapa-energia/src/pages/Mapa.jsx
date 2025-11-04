@@ -8,6 +8,7 @@ import {
   Polyline,
 } from "react-leaflet";
 import "../App.css";
+import CollapsibleLegend from "../components/CollapsibleLegend";
 import Loader from "../components/Loader";
 import SearchFilter from "../components/SearchFilter";
 import L from "leaflet";
@@ -37,31 +38,28 @@ const pointToLayerPlanta = (feature, latlng) => {
   return L.marker(latlng, { icon: iconoPlanta, interactive: true });
 };
 
-// Función para determinar el color y grosor de línea según el voltaje
 const getLineStyle = (voltage) => {
   const voltageNum = parseInt(voltage);
   
-  // Colores y grosores según el voltaje
   if (voltageNum >= 500) {
-    return { color: '#FF1744', weight: 4 }; // Rojo brillante - Extra alta tensión
+    return { color: '#d135ecff', weight: 3 };
   } else if (voltageNum >= 330) {
-    return { color: '#FF9100', weight: 3.5 }; // Naranja - Muy alta tensión
+    return { color: '#E91E63', weight: 3 };
   } else if (voltageNum >= 220) {
-    return { color: '#FFD600', weight: 3 }; // Amarillo - Alta tensión
+    return { color: '#FBC02D', weight: 2.5 };
   } else if (voltageNum >= 132) {
-    return { color: '#00E676', weight: 2.5 }; // Verde - Media tensión
+    return { color: '#00d48aff', weight: 1 };
   } else {
-    return { color: '#00B0FF', weight: 2 }; // Azul - Baja tensión
+    return { color: '#795548', weight: 1 };
   }
 };
 
-// Función para crear popups informativos para líneas
 const onEachLineFeature = (feature, layer) => {
   try {
     if (!feature || !feature.properties) return;
     const props = feature.properties;
     
-    let popupContent = `<h4>⚡ Línea de Energía</h4>`;
+    let popupContent = `<h4>Línea de Energía</h4>`;
     
     if (props.NOMBRE) {
       popupContent += `<strong>Nombre:</strong> ${props.NOMBRE}<br/>`;
@@ -88,7 +86,6 @@ const onEachLineFeature = (feature, layer) => {
   }
 };
 
-// Función para crear popups informativos para cada feature
 const onEachFeature = (feature, layer, { plantasData, onConnectionSelect }) => {
   try {
     if (!feature || !feature.properties) return;
@@ -118,7 +115,6 @@ const onEachFeature = (feature, layer, { plantasData, onConnectionSelect }) => {
         if (p) layer.openPopup();
       }
 
-      // Si es una central y tiene planta cercana, buscar coords de la planta y dibujar línea
       if (feature.geometry && props.nearestPlanta && plantasData) {
         const [lon, lat] = feature.geometry.coordinates;
         const plantaFeature = plantasData.features.find(
@@ -140,7 +136,6 @@ const onEachFeature = (feature, layer, { plantasData, onConnectionSelect }) => {
   }
 };
 
-// Componente que usa useMap() para centrar la vista en un feature seleccionado
 function MapNavigator({ feature }) {
   const map = useMap();
 
@@ -154,7 +149,6 @@ function MapNavigator({ feature }) {
   return null;
 }
 
-// Componente con Polyline animada
 function AnimatedPolyline({ connection }) {
   const polylineRef = useRef(null);
 
@@ -170,7 +164,7 @@ function AnimatedPolyline({ connection }) {
       ref={polylineRef}
       positions={[connection.centralCoords, connection.plantaCoords]}
       color="#4299e1"
-      weight={2}
+      weight={1}
       opacity={1}
       dashArray="5, 5"
     />
@@ -193,7 +187,6 @@ function FiltersPanel({ tiposDisponibles, filtrosActivos, setFiltrosActivos }) {
       if (map && map.scrollWheelZoom) map.scrollWheelZoom.enable();
     } catch (err) {
       void err;
-      // ignore
     }
   };
 
@@ -250,11 +243,10 @@ function Mapa() {
   const [filteredCentrales, setFilteredCentrales] = useState([]);
   const [filteredPlantas, setFilteredPlantas] = useState([]);
   const [selectedFeature, setSelectedFeature] = useState(null);
-  const [connection, setConnection] = useState(null); // { centralCoords, plantaCoords, distance }
+  const [connection, setConnection] = useState(null);
   const mapCenter = [-38.4161, -63.6167];
   const zoomLevel = 5;
 
-  // Cargar datos GeoJSON al montar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -268,7 +260,6 @@ function Mapa() {
         const plantas = await plantasRes.json();
         const lineas = await lineasRes.json();
 
-        // Calculamos la distancia a la planta más cercana para cada central
         const haversineKm = (lat1, lon1, lat2, lon2) => {
           const toRad = (v) => (v * Math.PI) / 180;
           const R = 6371;
@@ -325,7 +316,6 @@ function Mapa() {
           centrales.features.forEach((f) => {
             const raw = f?.properties?.gna ?? "Sin tipo";
             const g = String(raw).trim();
-            // Excluir entrada genérica/ruido "Central" para evitar un checkbox que no filtra nada
             if (g.toLowerCase() === "central") return;
             tiposSet.add(g);
           });
@@ -346,13 +336,11 @@ function Mapa() {
     return <Loader />;
   }
 
-  // Decidir qué centrales mostrar (filtradas o todas)
   const centralesToShow =
     filteredCentrales.length > 0
       ? { ...centralesData, features: filteredCentrales }
       : centralesData;
 
-  // Decidir qué plantas mostrar (filtradas o todas)
   const plantasToShow =
     filteredPlantas.length > 0
       ? { ...plantasData, features: filteredPlantas }
@@ -363,10 +351,8 @@ function Mapa() {
     setFilteredPlantas(result.plantas || []);
   };
 
-  // Callback para navegar a un feature cuando se selecciona desde sugerencias
   const handleSelectFeature = (feature) => {
     if (feature?.geometry?.coordinates) {
-      // Simplemente guardamos el feature; MapNavigator se encargará de centrar
       setSelectedFeature(feature);
     }
   };
@@ -453,8 +439,8 @@ function Mapa() {
                 const baseStyle = getLineStyle(voltage);
                 return {
                   ...baseStyle,
-                  opacity: 0.8,
-                  dashArray: "5, 5",
+                  weight: baseStyle.weight * 0.6,
+                  opacity: 0.7,
                 };
               }}
               onEachFeature={onEachLineFeature}
@@ -468,50 +454,12 @@ function Mapa() {
         <AnimatedPolyline connection={connection} />
       )}
 
-      <div className="map-legend">
-        <div className="legend-title">Leyenda</div>
-        <div className="legend-item">
-          <div className="legend-sym central" /> <div>Centrales</div>
-        </div>
-        <div className="legend-item">
-          <div className="legend-sym planta" /> <div>Plantas</div>
-        </div>
-        <div className="legend-item">
-          <div className="legend-sym brecha" />{" "}
-          <div>Brecha (≥ {serviceThresholdKm} km)</div>
-        </div>
-        
-        {/* Leyenda de voltajes */}
-        <div className="legend-divider"></div>
-        <div className="legend-subtitle">Líneas por Tensión</div>
-        <div className="legend-item">
-          <div className="legend-line" style={{ backgroundColor: '#FF1744' }}></div>
-          <div>≥ 500 kV</div>
-        </div>
-        <div className="legend-item">
-          <div className="legend-line" style={{ backgroundColor: '#FF9100' }}></div>
-          <div>330-499 kV</div>
-        </div>
-        <div className="legend-item">
-          <div className="legend-line" style={{ backgroundColor: '#FFD600' }}></div>
-          <div>220-329 kV</div>
-        </div>
-        <div className="legend-item">
-          <div className="legend-line" style={{ backgroundColor: '#00E676' }}></div>
-          <div>132-219 kV</div>
-        </div>
-        <div className="legend-item">
-          <div className="legend-line" style={{ backgroundColor: '#00B0FF' }}></div>
-          <div>&lt; 132 kV</div>
-        </div>
-        
-        {/* Filtros por tipo de planta */}
-        <FiltersPanel
-          tiposDisponibles={tiposDisponibles}
-          filtrosActivos={filtrosActivos}
-          setFiltrosActivos={setFiltrosActivos}
-        />
-      </div>
+      <CollapsibleLegend
+        serviceThresholdKm={serviceThresholdKm}
+        tiposDisponibles={tiposDisponibles}
+        filtrosActivos={filtrosActivos}
+        setFiltrosActivos={setFiltrosActivos}
+      />
 
       <ThresholdControl
         value={serviceThresholdKm}

@@ -1,22 +1,19 @@
-/*
-/* Estilos para el SearchFilter
-/* ------------------------------------------------ */
-
 .search-filter-container {
   position: absolute;
   top: 12px;
-  left: 50%;
+  left: 20%;
   transform: translateX(-50%);
-  z-index: 500; /* Aseguramos que esté sobre el mapa pero debajo de popups */
+  z-index: 500;
   width: 90%;
   max-width: 450px;
+  font-family: 'Exo 2', sans-serif;
 }
 
 .search-filter-wrapper {
   display: flex;
   align-items: center;
-  background-color: rgba(15, 23, 42, 0.9); /* Un poco más opaco */
-  border: 1px solid #4a5568; /* Usamos el color de borde de App.css */
+  background-color: rgba(15, 23, 42, 0.9);
+  border: 1px solid #4a5568;
   border-radius: 8px;
   padding: 8px 12px;
   gap: 8px;
@@ -25,28 +22,23 @@
   transition: border-color 0.2s ease-in-out;
 }
 
-/* --- NUEVO: Estado de Foco (focus-within) --- */
-/* Se activa cuando un elemento hijo (input o select) tiene el foco */
 .search-filter-wrapper:focus-within {
-  border-color: #4299e1; /* Color de acento azul */
+  border-color: #4299e1;
   box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
 }
 
-/* --- NUEVO: Estilo del icono de Lupa --- */
 .search-filter-icon {
-  color: #a0aec0; /* Gris claro (tomado de App.css) */
+  color: #a0aec0;
   flex-shrink: 0;
-  /* Alineación fina del icono */
   display: flex;
   align-items: center;
 }
 
-/* --- MEJORADO: Estilo del Select --- */
 .search-filter-select {
   background-color: rgba(30, 41, 59, 0.9);
-  border: 1px solid #4a5568; /* Borde consistente */
+  border: 1px solid #4a5568;
   color: #e2e8f0;
-  padding: 6px 30px 6px 10px; /* Espacio derecha para la flecha custom */
+  padding: 6px 30px 6px 10px;
   border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
@@ -54,12 +46,10 @@
   transition: all 0.2s ease;
   min-width: 130px;
   
-  /* --- NUEVO: Ocultar flecha nativa --- */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 
-  /* --- NUEVO: Flecha custom (SVG como data-uri) --- */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a0aec0'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
@@ -73,7 +63,6 @@
 
 .search-filter-select:focus {
   outline: none;
-  /* El :focus-within del wrapper ya se encarga del brillo */
 }
 
 /* Opciones del dropdown */
@@ -82,9 +71,8 @@
   color: #e2e8f0;
 }
 
-/* --- MEJORADO: Estilo del Input --- */
 .search-filter-input {
-  flex: 1; /* Ocupa el espacio restante */
+  flex: 1;
   background: transparent;
   border: none;
   color: #e2e8f0;
@@ -92,7 +80,6 @@
   outline: none;
   padding: 4px 0;
   font-family: inherit;
-  /* Separador sutil */
   border-left: 1px solid #4a5568;
   padding-left: 10px;
 }
@@ -101,12 +88,11 @@
   color: #a0aec0;
 }
 
-/* --- MEJORADO: Botón de Limpiar (X) --- */
 .search-filter-clear {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #e2e8f0;
-  border-radius: 50%; /* Círculo perfecto */
+  border-radius: 50%;
   width: 24px;
   height: 24px;
   display: flex;
@@ -118,14 +104,13 @@
 }
 
 .search-filter-clear:hover {
-  background: rgba(239, 68, 68, 0.8); /* Rojo al pasar el mouse */
+  background: rgba(239, 68, 68, 0.8);
   color: #fff;
 }
 
-/* --- NUEVO: Estilo del texto de resultados --- */
 .search-filter-info {
   margin-top: 8px;
-  float: right; /* Lo alineamos a la derecha */
+  float: right;
   font-size: 11px;
   font-weight: 500;
   color: #e2e8f0;
@@ -136,7 +121,6 @@
   backdrop-filter: blur(8px);
 }
 
-/* --- NUEVO: Dropdown de sugerencias --- */
 .search-suggestions {
   position: absolute;
   top: 100%;
